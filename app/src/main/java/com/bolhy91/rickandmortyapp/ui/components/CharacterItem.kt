@@ -13,12 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.bolhy91.rickandmortyapp.domain.model.Character
 import com.bolhy91.rickandmortyapp.ui.theme.PurpleGrey40
 
@@ -39,18 +43,25 @@ fun CharacterItem(
                 modifier = Modifier
                     .width(90.dp)
                     .height(90.dp)
+                    .background(Color.White)
                     .border(1.dp, PurpleGrey40, RoundedCornerShape(16.dp))
             ) {
-                Image(
-                    painter = rememberImagePainter(character.image),
-                    contentDescription = "Character image",
+                AsyncImage(
+                    model = ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(character.image)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = character.image,
                     modifier = Modifier
+                        .background(Color.White)
                         .shadow(
-                            5.dp,
+                            0.dp,
                             shape = RoundedCornerShape(16.dp),
                             true
                         ),
-                    alignment = Alignment.Center
+                    alignment = Alignment.Center,
+                    contentScale = ContentScale.Crop
                 )
             }
 
@@ -83,4 +94,10 @@ fun CharacterItem(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun Preview() {
+    CharacterItem(character = Character(1, "", "", "", "", "", "", ""), onClickItem = {})
 }
