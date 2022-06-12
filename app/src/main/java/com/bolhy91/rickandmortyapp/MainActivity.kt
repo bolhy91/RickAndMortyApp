@@ -19,8 +19,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             RickAndMortyAppTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     val navController = rememberNavController()
                     RickAndMortyNavGraph(navHostController = navController)

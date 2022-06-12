@@ -2,7 +2,6 @@ package com.bolhy91.rickandmortyapp.presentation.characters_lists
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -16,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bolhy91.rickandmortyapp.ui.components.CharacterItem
 import com.bolhy91.rickandmortyapp.ui.components.InputSearch
-import com.bolhy91.rickandmortyapp.ui.theme.Purple80
 import com.bolhy91.rickandmortyapp.ui.theme.PurpleGrey40
 
 @Composable
@@ -29,7 +27,7 @@ fun CharacterListScreen(
         modifier = Modifier
             .padding(16.dp)
     ) {
-        Text(text = "Rick And Morty", style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold))
+        Text(text = "Rick And Morty", style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black))
         Spacer(modifier = Modifier.height(20.dp))
         InputSearch {}
         Spacer(modifier = Modifier.height(20.dp))

@@ -43,7 +43,7 @@ fun CharacterItem(
                 modifier = Modifier
                     .width(90.dp)
                     .height(90.dp)
-                    .background(Color.White)
+                    .background(Color.Transparent)
                     .border(1.dp, PurpleGrey40, RoundedCornerShape(16.dp))
             ) {
                 AsyncImage(
@@ -54,7 +54,6 @@ fun CharacterItem(
                         .build(),
                     contentDescription = character.image,
                     modifier = Modifier
-                        .background(Color.White)
                         .shadow(
                             0.dp,
                             shape = RoundedCornerShape(16.dp),
