@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.bolhy91.rickandmortyapp.domain.repository.CharacterRepository
 import com.bolhy91.rickandmortyapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,12 +21,31 @@ class CharacterListViewModel @Inject constructor(
     val state: State<CharacterListState> = _state
 
     private var currentPage = 1
+    private var searchJob: Job? = null
 
     init {
         getCharacters(increase = false)
     }
 
-    fun getCharacters(
+    fun onEvent(event: CharacterListEvent) {
+        when (event) {
+            is CharacterListEvent.OnSearchQueryChange -> {
+                _state.value = _state.value.copy(searchQuery = event.name)
+                searchJob?.cancel()
+                searchJob = viewModelScope.launch {
+                    delay(500L)
+                    getCharacters(true)
+                }
+            }
+            is CharacterListEvent.onNextPressed -> {
+                getCharacters(event.increase)
+            }
+            is CharacterListEvent.onPreviousPressed ->
+                getCharacters(event.increase)
+        }
+    }
+
+    private fun getCharacters(
         increase: Boolean,
         name: String? = _state.value.searchQuery?.lowercase(),
         fetchFromRemote: Boolean = false

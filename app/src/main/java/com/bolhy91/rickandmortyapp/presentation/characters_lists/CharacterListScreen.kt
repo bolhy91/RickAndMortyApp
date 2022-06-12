@@ -1,5 +1,6 @@
 package com.bolhy91.rickandmortyapp.presentation.characters_lists
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,15 +40,26 @@ fun CharacterListScreen(
                     )
                 )
                 Spacer(modifier = Modifier.height(15.dp))
-                InputSearch {}
+                InputSearch(onInputValue = { name ->
+                    Log.i("SEARCH VALUE: ", name)
+                    viewModel.onEvent(CharacterListEvent.OnSearchQueryChange(name))
+                })
             }
         },
         bottomBar = {
             BottomBar(
                 showPrevious = state.value.showPrevious,
                 showNext = state.value.showNext,
-                onPreviousPressed = { viewModel.getCharacters(increase = false) },
-                onNextPressed = { viewModel.getCharacters(true) }
+                onPreviousPressed = {
+                    viewModel.onEvent(
+                        CharacterListEvent.onPreviousPressed(false)
+                    )
+                },
+                onNextPressed = {
+                    viewModel.onEvent(
+                        CharacterListEvent.onNextPressed(true)
+                    )
+                }
             )
         },
         modifier = Modifier.padding(16.dp)

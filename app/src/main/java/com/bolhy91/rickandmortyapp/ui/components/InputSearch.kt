@@ -20,12 +20,15 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun InputSearch(
-    onInputClick: () -> Unit
+    onInputValue: (String) -> Unit
 ) {
     var inputValue by remember { mutableStateOf("") }
     TextField(
         value = inputValue,
-        onValueChange = { inputValue = it },
+        onValueChange = {
+            inputValue = it
+            onInputValue(inputValue)
+        },
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -33,7 +36,6 @@ fun InputSearch(
                 tint = Color.White,
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { onInputClick() }
             )
         },
         label = { Text(text = "Search character") },
@@ -41,7 +43,7 @@ fun InputSearch(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background),
         shape = RoundedCornerShape(8.dp),
-        textStyle = TextStyle(color= Color.Black, fontSize = 20.sp),
+        textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
         singleLine = true
     )
 }

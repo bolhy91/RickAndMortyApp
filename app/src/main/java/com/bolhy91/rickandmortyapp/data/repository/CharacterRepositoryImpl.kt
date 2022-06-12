@@ -35,7 +35,7 @@ class CharacterRepositoryImpl @Inject constructor(
             emit(Resource.Success(
                 data = localCharacters.map { it.toCharacter() }
             ))
-            val isLocalEmpty = localCharacters.isEmpty()
+            val isLocalEmpty = localCharacters.isEmpty() && name.isNullOrBlank()
             Log.i("isLocalEmpty:", isLocalEmpty.toString())
 
             val shouldJustLoadFromCache = !isLocalEmpty && !fetchFromRemote
