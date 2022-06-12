@@ -10,10 +10,15 @@ interface RickDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacters(characterEntity: List<CharacterEntity>)
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM characters
         WHERE LOWER(name) LIKE '%' || LOWER(:name) || '%' OR
-        page = :page
-    """)
-    suspend fun searchCharacters(page: Int, name: String): List<CharacterEntity>
+        page == :page
+    """
+    )
+    suspend fun searchCharacters(page: Int, name: String?): List<CharacterEntity>
+
+    @Query("DELETE FROM characters")
+    suspend fun clearCharacters()
 }

@@ -5,5 +5,5 @@ import com.bolhy91.rickandmortyapp.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface CharacterRepository {
-    suspend fun getCharacters(page: Int, name: String?): Flow<Resource<List<Character>>>
+    suspend fun getCharacters(page: Int, name: String?, fetchFromRemote: Boolean): Flow<Resource<List<Character>>>
 }

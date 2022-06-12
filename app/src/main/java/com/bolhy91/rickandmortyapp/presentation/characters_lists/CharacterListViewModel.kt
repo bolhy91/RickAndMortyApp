@@ -18,17 +18,24 @@ class CharacterListViewModel @Inject constructor(
     private val _state: MutableState<CharacterListState> = mutableStateOf(CharacterListState())
     val state: State<CharacterListState> = _state
 
+    private var currentPage = 1
+
     init {
-        getCharacters()
+        getCharacters(increase = false)
     }
 
-    private fun getCharacters(
-        page: Int = 1,
-        name: String = _state.value.searchQuery,
+    fun getCharacters(
+        increase: Boolean,
+        name: String? = _state.value.searchQuery?.lowercase(),
         fetchFromRemote: Boolean = false
     ) {
         viewModelScope.launch {
-            characterRepository.getCharacters(page, name)
+
+            if (increase) currentPage++ else if (currentPage > 1) currentPage--
+            val showPrevious = currentPage > 1
+            val showNext = currentPage < 42
+
+            characterRepository.getCharacters(currentPage, name, fetchFromRemote)
                 .collect { result ->
                     when (result) {
                         is Resource.Error -> {
@@ -39,7 +46,11 @@ class CharacterListViewModel @Inject constructor(
                         }
                         is Resource.Success -> {
                             result.data?.let { characters ->
-                                _state.value = _state.value.copy(characters = characters)
+                                _state.value = _state.value.copy(
+                                    characters = characters,
+                                    showPrevious = showPrevious,
+                                    showNext = showNext
+                                )
                             }
                         }
                     }

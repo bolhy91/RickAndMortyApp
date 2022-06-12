@@ -2,6 +2,7 @@ package com.bolhy91.rickandmortyapp.di
 
 import android.app.Application
 import androidx.room.Room
+import com.bolhy91.rickandmortyapp.data.local.RickDao
 import com.bolhy91.rickandmortyapp.data.local.RickDatabase
 import com.bolhy91.rickandmortyapp.data.remote.RickApi
 import com.bolhy91.rickandmortyapp.utils.Api.BASE_URL
@@ -40,5 +41,11 @@ object AppModule {
             RickDatabase::class.java,
             "rickandmorty.db"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRickDao(appDatabase: RickDatabase): RickDao {
+        return appDatabase.rickDao()
     }
 }

@@ -1,7 +1,9 @@
 package com.bolhy91.rickandmortyapp.data.repository
 
 import android.util.Log
+import com.bolhy91.rickandmortyapp.data.local.RickDao
 import com.bolhy91.rickandmortyapp.data.mapper.toCharacter
+import com.bolhy91.rickandmortyapp.data.mapper.toCharacterEntity
 import com.bolhy91.rickandmortyapp.data.remote.RickApi
 import com.bolhy91.rickandmortyapp.domain.model.Character
 import com.bolhy91.rickandmortyapp.domain.repository.CharacterRepository
@@ -15,21 +17,53 @@ import javax.inject.Singleton
 
 @Singleton
 class CharacterRepositoryImpl @Inject constructor(
-    private val rickApi: RickApi
+    private val rickApi: RickApi,
+    private val rickDao: RickDao
 ) : CharacterRepository {
-    override suspend fun getCharacters(page: Int, name: String?): Flow<Resource<List<Character>>> {
+    override suspend fun getCharacters(
+        page: Int,
+        name: String?,
+        fetchFromRemote: Boolean
+    ): Flow<Resource<List<Character>>> {
         return flow {
-            try {
-                emit(Resource.Loading(isLoading = true))
+            Log.i("PAGE:", page.toString())
+            Log.i("NAME:", name.toString())
+            emit(Resource.Loading(isLoading = true))
+            val localCharacters = rickDao.searchCharacters(page, name)
+            Log.i("localCharacters: ", localCharacters.toString())
+
+            emit(Resource.Success(
+                data = localCharacters.map { it.toCharacter() }
+            ))
+            val isLocalEmpty = localCharacters.isEmpty()
+            Log.i("isLocalEmpty:", isLocalEmpty.toString())
+
+            val shouldJustLoadFromCache = !isLocalEmpty && !fetchFromRemote
+            Log.i("shouldJustLoadFromCache:", shouldJustLoadFromCache.toString())
+            if (shouldJustLoadFromCache) {
+                emit(Resource.Loading(false))
+                return@flow
+            }
+            val remoteCharacter = try {
                 val results = rickApi.getCharacters(page, name)
-                Log.i("Results", results.toString())
-                emit(Resource.Success(data = results.results.map { it.toCharacter() }))
+                results.results.map { it.toCharacterEntity(page) }
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error("couldn't load data: ${e.message}"))
+                null
             } catch (e: HttpException) {
                 e.printStackTrace()
                 emit(Resource.Error("couldn't load data http: ${e.message}"))
+                null
+            }
+
+            remoteCharacter?.let { charactersEntity ->
+                rickDao.clearCharacters()
+                rickDao.insertCharacters(charactersEntity)
+                emit(Resource.Success(
+                    data = charactersEntity.map { it.toCharacter() }
+                ))
+                emit(Resource.Loading(false))
             }
         }
     }
