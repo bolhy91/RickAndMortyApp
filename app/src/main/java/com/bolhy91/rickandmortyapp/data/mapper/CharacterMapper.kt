@@ -4,6 +4,7 @@ import com.bolhy91.rickandmortyapp.data.local.CharacterEntity
 import com.bolhy91.rickandmortyapp.data.remote.dto.CharacterDto
 import com.bolhy91.rickandmortyapp.domain.model.Character
 
+
 fun CharacterDto.toCharacter(): Character {
     return Character(
         id = id,
@@ -13,7 +14,7 @@ fun CharacterDto.toCharacter(): Character {
         gender = gender,
         location = location.name,
         image = image,
-        created = created
+        created = created.format("")
     )
 }
 

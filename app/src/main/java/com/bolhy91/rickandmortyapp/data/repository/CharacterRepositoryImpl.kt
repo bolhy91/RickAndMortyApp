@@ -26,15 +26,17 @@ class CharacterRepositoryImpl @Inject constructor(
         fetchFromRemote: Boolean
     ): Flow<Resource<List<Character>>> {
         return flow {
-            Log.i("PAGE:", page.toString())
-            Log.i("NAME:", name.toString())
+
             emit(Resource.Loading(isLoading = true))
             val localCharacters = rickDao.searchCharacters(page, name)
+            Log.i("PAGE: ", page.toString())
             Log.i("localCharacters: ", localCharacters.toString())
-
-            emit(Resource.Success(
-                data = localCharacters.map { it.toCharacter() }
-            ))
+            emit(
+                Resource.Success(
+                    data = localCharacters.map { it.toCharacter() },
+                    pages = 42
+                )
+            )
             val isLocalEmpty = localCharacters.isEmpty() && name.isNullOrBlank()
             Log.i("isLocalEmpty:", isLocalEmpty.toString())
 
@@ -46,7 +48,7 @@ class CharacterRepositoryImpl @Inject constructor(
             }
             val remoteCharacter = try {
                 val results = rickApi.getCharacters(page, name)
-                results.results.map { it.toCharacterEntity(page) }
+                results
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error("couldn't load data: ${e.message}"))
@@ -57,12 +59,17 @@ class CharacterRepositoryImpl @Inject constructor(
                 null
             }
 
-            remoteCharacter?.let { charactersEntity ->
+            remoteCharacter?.let { results ->
+                val charactersEntity = results.results.map { it.toCharacterEntity(page) }
+                val pages = results.info.pages
                 rickDao.clearCharacters()
                 rickDao.insertCharacters(charactersEntity)
-                emit(Resource.Success(
-                    data = charactersEntity.map { it.toCharacter() }
-                ))
+                emit(
+                    Resource.Success(
+                        data = charactersEntity.map { it.toCharacter() },
+                        pages = pages
+                    )
+                )
                 emit(Resource.Loading(false))
             }
         }

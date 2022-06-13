@@ -10,3 +10,8 @@ data class Character(
     val image: String,
     val created: String
 )
+
+enum class CharacterStatus(val status: String) {
+    ALIVE("Alive"),
+    UNKNOWN("unknown"),
+}

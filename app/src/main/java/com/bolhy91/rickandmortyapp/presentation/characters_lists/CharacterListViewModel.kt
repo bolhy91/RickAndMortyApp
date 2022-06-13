@@ -24,38 +24,37 @@ class CharacterListViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     init {
-        getCharacters(increase = false)
+        getCharacters()
     }
 
     fun onEvent(event: CharacterListEvent) {
         when (event) {
             is CharacterListEvent.OnSearchQueryChange -> {
                 _state.value = _state.value.copy(searchQuery = event.name)
+                if (event.name.isBlank()) currentPage = 1
                 searchJob?.cancel()
                 searchJob = viewModelScope.launch {
                     delay(500L)
-                    getCharacters(true)
+                    getCharacters(fetchFromRemote = true)
                 }
             }
             is CharacterListEvent.onNextPressed -> {
-                getCharacters(event.increase)
+                currentPage++
+                getCharacters(fetchFromRemote = true)
             }
-            is CharacterListEvent.onPreviousPressed ->
-                getCharacters(event.increase)
+            is CharacterListEvent.onPreviousPressed -> {
+                currentPage--
+                getCharacters(fetchFromRemote = true)
+            }
         }
     }
 
     private fun getCharacters(
-        increase: Boolean,
         name: String? = _state.value.searchQuery?.lowercase(),
         fetchFromRemote: Boolean = false
     ) {
         viewModelScope.launch {
-
-            if (increase) currentPage++ else if (currentPage > 1) currentPage--
             val showPrevious = currentPage > 1
-            val showNext = currentPage < 42
-
             characterRepository.getCharacters(currentPage, name, fetchFromRemote)
                 .collect { result ->
                     when (result) {
@@ -66,6 +65,7 @@ class CharacterListViewModel @Inject constructor(
                             _state.value = _state.value.copy(isLoading = true)
                         }
                         is Resource.Success -> {
+                            val showNext = currentPage < result.pages!!
                             result.data?.let { characters ->
                                 _state.value = _state.value.copy(
                                     characters = characters,

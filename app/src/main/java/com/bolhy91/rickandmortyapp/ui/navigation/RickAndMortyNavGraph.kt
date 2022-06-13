@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.bolhy91.rickandmortyapp.domain.model.Character
 import com.bolhy91.rickandmortyapp.presentation.characters_detail.CharacterDetailScreen
 import com.bolhy91.rickandmortyapp.presentation.characters_lists.CharacterListScreen
 
@@ -35,6 +36,8 @@ fun NavGraphBuilder.characterDetailScreenNav(navHostController: NavHostControlle
         route = Destination.CharacterDetail.route + "/{id}",
         arguments = Destination.CharacterDetail.arguments
     ) {
-        CharacterDetailScreen()
+        val character = Character(1, "Rick Morty", "Alive", "Robot", "Male", "", "Ciudad de Panama", "4/8/22")
+
+        CharacterDetailScreen(character)
     }
 }
