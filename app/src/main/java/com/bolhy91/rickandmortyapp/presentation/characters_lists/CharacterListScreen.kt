@@ -18,8 +18,10 @@ import com.bolhy91.rickandmortyapp.ui.components.CharacterItem
 import com.bolhy91.rickandmortyapp.ui.components.InputSearch
 import com.bolhy91.rickandmortyapp.ui.theme.PurpleGrey40
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import com.bolhy91.rickandmortyapp.ui.components.BottomBar
 import com.bolhy91.rickandmortyapp.ui.components.Shimmer
+import com.bolhy91.rickandmortyapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,19 +93,34 @@ fun CharacterListScreen(
         ) {
             if (state.value.isLoading) {
                 Column {
-                    repeat(20){
-                        Shimmer(brush = linearGradient(
-                            listOf(
-                                Color.Gray.copy(alpha = 0.9f),
-                                Color.Gray.copy(alpha = 0.4f),
-                                Color.Gray.copy(alpha = 0.9f)
+                    repeat(20) {
+                        Shimmer(
+                            brush = linearGradient(
+                                listOf(
+                                    Color.Gray.copy(alpha = 0.9f),
+                                    Color.Gray.copy(alpha = 0.4f),
+                                    Color.Gray.copy(alpha = 0.9f)
+                                )
                             )
-                        ))
+                        )
                     }
                 }
-                //CircularProgressIndicator(color = Color.Black)
             } else {
-                state.value.error?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
+                state.value.error?.let {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_default),
+                            contentDescription = null
+                        )
+                        Text(text = it, color = MaterialTheme.colorScheme.error)
+                    }
+                }
             }
         }
     }
