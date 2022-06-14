@@ -59,18 +59,26 @@ class CharacterListViewModel @Inject constructor(
                 .collect { result ->
                     when (result) {
                         is Resource.Error -> {
-                            _state.value = _state.value.copy(isLoading = false)
+                            _state.value = _state.value.copy(
+                                isLoading = false,
+                                error = result.message,
+                                characters = emptyList()
+                            )
                         }
                         is Resource.Loading -> {
-                            _state.value = _state.value.copy(isLoading = true)
+                            _state.value = _state.value.copy(
+                                isLoading = result.isLoading,
+                            )
                         }
                         is Resource.Success -> {
                             val showNext = currentPage < result.pages!!
+                            delay(500L)
                             result.data?.let { characters ->
                                 _state.value = _state.value.copy(
                                     characters = characters,
                                     showPrevious = showPrevious,
-                                    showNext = showNext
+                                    showNext = showNext,
+                                    isLoading = false
                                 )
                             }
                         }

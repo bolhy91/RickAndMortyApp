@@ -7,5 +7,6 @@ data class CharacterListState(
     val isLoading: Boolean = false,
     val searchQuery: String? = null,
     val showPrevious: Boolean = false,
-    val showNext: Boolean = false
+    val showNext: Boolean = false,
+    val error: String? = null
 )

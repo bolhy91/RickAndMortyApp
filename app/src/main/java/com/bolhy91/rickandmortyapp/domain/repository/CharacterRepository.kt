@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface CharacterRepository {
     suspend fun getCharacters(page: Int, name: String?, fetchFromRemote: Boolean): Flow<Resource<List<Character>>>
+    suspend fun getCharacterById(id: Int, fetchFromRemote: Boolean): Flow<Resource<Character>>
 }

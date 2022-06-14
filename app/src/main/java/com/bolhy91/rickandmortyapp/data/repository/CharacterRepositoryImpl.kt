@@ -74,4 +74,16 @@ class CharacterRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getCharacterById(
+        id: Int,
+        fetchFromRemote: Boolean
+    ): Flow<Resource<Character>> {
+        return flow {
+            emit(Resource.Loading(isLoading = true))
+            val character = rickDao.getCharacterById(id)
+            Log.i("DAO CHARACTER: ", character.toString())
+            emit(Resource.Success(data = character.toCharacter(), null))
+        }
+    }
 }

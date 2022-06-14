@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.bolhy91.rickandmortyapp.domain.model.Character
 
 @Dao
 interface RickDao {
@@ -21,4 +22,11 @@ interface RickDao {
 
     @Query("DELETE FROM characters")
     suspend fun clearCharacters()
+
+    @Query(
+        """
+        SELECT * FROM characters as c WHERE c.id =:id
+    """
+    )
+    suspend fun getCharacterById(id: Int): CharacterEntity
 }

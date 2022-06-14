@@ -1,6 +1,7 @@
 package com.bolhy91.rickandmortyapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,7 +26,12 @@ fun NavGraphBuilder.characterListScreenNav(navHostController: NavHostController)
     ) {
         CharacterListScreen(
             onClickItem = { id ->
-                navHostController.navigate("${Destination.CharacterDetail.route}/${id}")
+                navHostController.navigate("${Destination.CharacterDetail.route}/${id}") {
+                    popUpTo(navHostController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                }
             }
         )
     }
@@ -36,8 +42,10 @@ fun NavGraphBuilder.characterDetailScreenNav(navHostController: NavHostControlle
         route = Destination.CharacterDetail.route + "/{id}",
         arguments = Destination.CharacterDetail.arguments
     ) {
-        val character = Character(1, "Rick Morty", "Alive", "Robot", "Male", "", "Ciudad de Panama", "4/8/22")
-
-        CharacterDetailScreen(character)
+        CharacterDetailScreen(
+            upPress = {
+                navHostController.navigate(Destination.CharacterList.route)
+            }
+        )
     }
 }
