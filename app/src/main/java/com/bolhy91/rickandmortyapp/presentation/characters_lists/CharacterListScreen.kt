@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ import com.bolhy91.rickandmortyapp.ui.components.InputSearch
 import com.bolhy91.rickandmortyapp.ui.theme.PurpleGrey40
 import androidx.compose.ui.graphics.Color
 import com.bolhy91.rickandmortyapp.ui.components.BottomBar
+import com.bolhy91.rickandmortyapp.ui.components.Shimmer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,11 +86,22 @@ fun CharacterListScreen(
 
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
             if (state.value.isLoading) {
-                CircularProgressIndicator(color = Color.Black)
+                Column {
+                    repeat(20){
+                        Shimmer(brush = linearGradient(
+                            listOf(
+                                Color.Gray.copy(alpha = 0.9f),
+                                Color.Gray.copy(alpha = 0.4f),
+                                Color.Gray.copy(alpha = 0.9f)
+                            )
+                        ))
+                    }
+                }
+                //CircularProgressIndicator(color = Color.Black)
             } else {
                 state.value.error?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
             }
